@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using YouTubeApiLib;
 
 namespace YouTube_downloader_server_console
@@ -16,7 +17,7 @@ namespace YouTube_downloader_server_console
 
         private static void Run()
         {
-            const int serverPort = 5555;
+            const int serverPort = 80;
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.Bind(endPoint);
