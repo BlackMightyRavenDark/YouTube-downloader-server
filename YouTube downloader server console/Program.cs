@@ -131,8 +131,7 @@ namespace YouTube_downloader_server_console
             if (!string.IsNullOrEmpty(body))
             {
                 t += "Content-Type: application/json\r\n" +
-                    "Access-Control-Allow-Origin: *\r\n" +
-                    $"Content-Length: {body.Length}\r\n\r\n{body}";
+                    $"Access-Control-Allow-Origin: *\r\n\r\n{body}";
             }
             return t;
         }
