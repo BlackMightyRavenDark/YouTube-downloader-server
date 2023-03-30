@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using YouTubeApiLib;
 
 namespace YouTube_downloader_server_console
@@ -132,6 +130,10 @@ namespace YouTube_downloader_server_console
             {
                 t += "Content-Type: application/json\r\n" +
                     $"Access-Control-Allow-Origin: *\r\n\r\n{body}";
+            }
+            else
+            {
+                t += "\r\n";
             }
             return t;
         }
