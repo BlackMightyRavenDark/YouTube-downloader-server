@@ -128,8 +128,10 @@ namespace YouTube_downloader_server_console
             string t = $"HTTP/1.1 {errorCode} {msg}\r\n";
             if (!string.IsNullOrEmpty(body))
             {
+                byte [] bodyBytes = Encoding.UTF8.GetBytes(body);
                 t += "Content-Type: application/json\r\n" +
-                    $"Access-Control-Allow-Origin: *\r\n\r\n{body}";
+                    "Access-Control-Allow-Origin: *\r\n" +
+                    $"Content-Length: {bodyBytes.Length}\r\n\r\n{body}";
             }
             else
             {
