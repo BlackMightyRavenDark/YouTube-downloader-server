@@ -96,7 +96,7 @@ namespace YouTube_downloader_server_console
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(" Declined!");
+                            Console.WriteLine(" Rejected!");
 
                             SendMessage(client, GenerateResponse(400, "Bad request", null));
                         }
@@ -104,7 +104,7 @@ namespace YouTube_downloader_server_console
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(", Declined!");
+                        Console.WriteLine(" Rejected!");
 
                         SendMessage(client, GenerateResponse(400, "Unsupported method", null));
                     }
