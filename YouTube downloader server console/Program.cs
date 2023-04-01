@@ -15,7 +15,7 @@ namespace YouTube_downloader_server_console
 
         private static void Run()
         {
-            const int serverPort = 80;
+            const int serverPort = 5555;
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.Bind(endPoint);
