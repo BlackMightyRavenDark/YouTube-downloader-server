@@ -19,7 +19,7 @@ namespace YouTube_downloader_server_console
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.Bind(endPoint);
-            server.Listen(0);
+            server.Listen((int)SocketOptionName.MaxConnections);
 
             Console.WriteLine($"Server started on port {serverPort}");
 
