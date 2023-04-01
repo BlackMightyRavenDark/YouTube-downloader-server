@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using YouTubeApiLib;
 
 namespace YouTube_downloader_server_console
@@ -29,6 +30,7 @@ namespace YouTube_downloader_server_console
                 try
                 {
                     client = server.Accept();
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"{client.RemoteEndPoint} is connected");
 
                     byte[] buffer = new byte[1024];
@@ -41,14 +43,18 @@ namespace YouTube_downloader_server_console
                     }
 
                     string msg = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine($"{client.RemoteEndPoint} sent:\n<<<\n{msg}\n>>>\n");
 
-                    string[] strings = msg.Split('\n');
-                    string[] req = strings[0].Split(' ');
+                    string[] strings = msg.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    Console.Write($"{client.RemoteEndPoint} sent: {strings[0]}");
+
+                    string[] req = strings[0].Split(new char[] { ' ' }, 3);
                     if (req[0] == "GET")
                     {
                         if (req[1].StartsWith("/videoinfo/"))
                         {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine(" Accepted!");
+
                             string id = req[1].Substring(11);
                             YouTubeApi api = new YouTubeApi();
                             YouTubeVideo video = api.GetVideo(new VideoId(id));
@@ -57,26 +63,49 @@ namespace YouTube_downloader_server_console
                                 string body = video.RawInfo?.RawData.ToString();
                                 if (!string.IsNullOrEmpty(body))
                                 {
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.Write("Sending a video info ");
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.Write(id);
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.WriteLine($" to the client {client.RemoteEndPoint}");
+
                                     string answer = GenerateResponse(200, "OK", body);
                                     SendMessage(client, answer);
                                 }
                                 else
                                 {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.Write("ERROR!");
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.WriteLine($" Video {id} not found!");
+
                                     SendMessage(client, GenerateResponse(404, "Not found", null));
                                 }
                             }
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("ERROR!");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine($" Video {id} not found!");
+
                                 SendMessage(client, GenerateResponse(404, "Not found", null));
                             }
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(" Declined!");
+
                             SendMessage(client, GenerateResponse(400, "Bad request", null));
                         }
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(", Declined!");
+
                         SendMessage(client, GenerateResponse(400, "Unsupported method", null));
                     }
                 }
@@ -99,6 +128,7 @@ namespace YouTube_downloader_server_console
 
         private static void DisconnectClient(Socket client)
         {
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"{client.RemoteEndPoint} is disconnected");
             client.Shutdown(SocketShutdown.Both);
             client.Close();
