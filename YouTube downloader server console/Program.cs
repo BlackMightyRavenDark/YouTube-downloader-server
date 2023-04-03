@@ -27,7 +27,7 @@ namespace YouTube_downloader_server_console
             {
                 Socket client = server.Accept();
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"{client.RemoteEndPoint} is connected");
+                Console.WriteLine($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> {client.RemoteEndPoint} is connected");
 
                 ProcessClient(client);
 
@@ -43,14 +43,14 @@ namespace YouTube_downloader_server_console
             int bytesRead = client.Receive(buffer, 0, buffer.Length, SocketFlags.None);
             if (bytesRead == 0)
             {
-                Console.WriteLine($"Zero bytes received from {client.RemoteEndPoint}");
+                Console.WriteLine($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> Zero bytes received from {client.RemoteEndPoint}");
                 return;
             }
 
             string msg = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
             string[] strings = msg.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            Console.Write($"{client.RemoteEndPoint} sent: {strings[0]}");
+            Console.Write($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> {client.RemoteEndPoint} sent: {strings[0]}");
 
             string[] req = strings[0].Split(new char[] { ' ' }, 3);
             if (req[0] == "GET")
@@ -69,7 +69,7 @@ namespace YouTube_downloader_server_console
                         if (!string.IsNullOrEmpty(body))
                         {
                             Console.ForegroundColor = ConsoleColor.White;
-                            Console.Write("Sending a video info ");
+                            Console.Write($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> Sending a video info ");
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.Write(id);
                             Console.ForegroundColor = ConsoleColor.White;
@@ -80,6 +80,8 @@ namespace YouTube_downloader_server_console
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> ");
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.Write("ERROR!");
                             Console.ForegroundColor = ConsoleColor.White;
@@ -90,6 +92,8 @@ namespace YouTube_downloader_server_console
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("{DateTime.Now:dd.MM.yyyy HH:mm:ss}> ");
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write("ERROR!");
                         Console.ForegroundColor = ConsoleColor.White;
@@ -124,7 +128,7 @@ namespace YouTube_downloader_server_console
         private static void DisconnectClient(Socket client)
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"{client.RemoteEndPoint} is disconnected");
+            Console.WriteLine($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> {client.RemoteEndPoint} is disconnected");
             client.Shutdown(SocketShutdown.Both);
             client.Close();
         }
