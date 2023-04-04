@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using YouTubeApiLib;
+using Newtonsoft.Json.Linq;
 
 namespace YouTube_downloader_server_console
 {
@@ -61,22 +62,34 @@ namespace YouTube_downloader_server_console
                     Console.WriteLine(" Accepted!");
 
                     string id = req[1].Substring(11);
+                    VideoId videoId = new VideoId(id);
+                    YouTubeApi.getMediaTracksInfoImmediately = true;
+                    YouTubeApi.decryptMediaTrackUrlsAutomaticallyIfPossible = true;
                     YouTubeApi api = new YouTubeApi();
-                    YouTubeVideo video = api.GetVideo(new VideoId(id));
+                    YouTubeVideo video = api.GetVideo(videoId);
                     if (video != null)
                     {
-                        string body = video.RawInfo?.RawData.ToString();
-                        if (!string.IsNullOrEmpty(body))
+                        if (video.RawInfo != null)
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.Write($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> Sending a video info ");
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.Write(id);
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine($" to the client {client.RemoteEndPoint}");
+                            JToken token1 = video.RawInfo.RawData.Value<JToken>("streamingData");
+                            JToken token2 = video.SimplifiedInfo.Info?.Value<JToken>("streamingData");
+                            if (token2 != null)
+                            {
+                                token1.Replace(token2);
+                            }
+                            string body = video.RawInfo.RawData.ToString();
+                            if (!string.IsNullOrEmpty(body))
+                            {
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.Write($"{DateTime.Now:dd.MM.yyyy HH:mm:ss}> Sending a video info ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.Write(id);
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine($" to the client {client.RemoteEndPoint}");
 
-                            string answer = GenerateResponse(200, "OK", body);
-                            SendMessage(client, answer);
+                                string answer = GenerateResponse(200, "OK", body);
+                                SendMessage(client, answer);
+                            }
                         }
                         else
                         {
